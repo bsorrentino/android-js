@@ -63,7 +63,8 @@
 					<configuration>
 						<sdk>
 							<platform>19</platform>
-						</sdk> 
+						</sdk>
+
 					</configuration>
 				</plugin>
 				<plugin>

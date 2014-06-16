@@ -21,6 +21,7 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
         final Config config = new Config();
 
         config.setInvokeDynamicEnabled(false);
+
         //config.setGlobalObjectFactory(factory);
         //config.setOutputStream(System.out);
         //config.setErrorStream(System.err);
