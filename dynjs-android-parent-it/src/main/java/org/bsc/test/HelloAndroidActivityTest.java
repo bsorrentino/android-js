@@ -18,7 +18,7 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
         final HelloAndroidActivity activity = getActivity();
         assertNotNull(activity);
 
-        final Config config = new Config();
+        final Config config = new Config( getClass().getClassLoader() );
 
         config.setInvokeDynamicEnabled(false);
 
@@ -60,7 +60,7 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
                 new java.io.InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.js")) )
                 .execute();
 
-        System.out.println( "END TEST OF DYNJS " + result);
+        System.out.println( "END TEST OF DYNJS " + ((result!=null) ? result.getClass() : (Class<?>)null) );
     }
 }
 
