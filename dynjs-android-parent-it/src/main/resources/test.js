@@ -1,19 +1,20 @@
-"use strict";
-
 var BroadcastReceiver       = Packages.android.content.BroadcastReceiver;
 var LocalBroadcastManager   = Packages.android.support.v4.content.LocalBroadcastManager;
 var Intent                  = Packages.android.content.Intent;
 
 var msg = 'hello dynjs';
 
+function print( msg ) {
+    java.lang.System.out.println(msg);
+}
 try {
 
 print(msg);
 
-var receiver = new BroadcastReceiver();
 
-receive.onReceive = function(ctx, ii) { print( "handle message " );  }
-
+var receiver = new BroadcastReceiver( {
+    onReceive:function(ctx, ii) { print( "handle message " ) }
+});
 
 /*
 LocalBroadcastManager.getInstance(activity)
@@ -29,7 +30,7 @@ LocalBroadcastManager.getInstance(activity)
 
 } catch(e) {
 
-    print( 'ERROR ' + e );
+    java.lang.System.err.println( 'ERROR ' + e );
 };
 
-msg;
+
