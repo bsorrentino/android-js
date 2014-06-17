@@ -1,36 +1,41 @@
-var BroadcastReceiver       = Packages.android.content.BroadcastReceiver;
-var LocalBroadcastManager   = Packages.android.support.v4.content.LocalBroadcastManager;
+//var BroadcastReceiver       = Packages.android.content.BroadcastReceiver;
+var BroadcastReceiver       = Packages.org.bsc.test.RhinoBroadcastReceiver;
+var LocalBroadcastManager   = android.support.v4.content.LocalBroadcastManager;
 var Intent                  = Packages.android.content.Intent;
-
-var msg = 'hello dynjs';
+var IntentFilter            = Packages.android.content.IntentFilter;
 
 function print( msg ) {
     java.lang.System.out.println(msg);
 }
+
+function error( msg ) {
+    java.lang.System.err.println( "ERROR: " +msg);
+}
+
 try {
 
-print(msg);
+print( "ACTIVITY: " + activity );
 
+var receiver = new BroadcastReceiver(
+    function(ctx, ii) { print( "handle message " + ctx + " " + ii  ) }
+);
 
-var receiver = new BroadcastReceiver( {
-    onReceive:function(ctx, ii) { print( "handle message " ) }
-});
+print( "LOCAL_BROADCAST_MANAGER: " + LocalBroadcastManager );
 
-/*
-LocalBroadcastManager.getInstance(activity)
-    .registerReceiver(receiver, new IntentFilter("custom-event-name"));
+var bm = LocalBroadcastManager.getInstance(activity);
 
+print( "LocalBroadcastManager: " + bm );
 
-LocalBroadcastManager.getInstance(activity)
-        .sendBroadcast( new Intent("custom-event-name") );
+bm.registerReceiver(receiver, new IntentFilter("custom-event-name"));
 
-LocalBroadcastManager.getInstance(activity)
-    .unregisterReceiver(receiver);
-*/
+bm.sendBroadcastSync( new Intent("custom-event-name") );
+
+bm.unregisterReceiver(receiver);
+
 
 } catch(e) {
 
-    java.lang.System.err.println( 'ERROR ' + e );
+    error( e );
 };
 
 
