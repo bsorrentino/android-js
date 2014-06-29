@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>android-js-parent</artifactId>
+        <groupId>org.bsc</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+	<artifactId>android-js-rhino-app</artifactId>
+	<packaging>apk</packaging>
+	<name>Android::JS::Rhino Application - ${project.version}</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>android</groupId>
+			<artifactId>android</artifactId>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
+        </dependency>
+
+	</dependencies>
+
+    <profiles>
+
+    <profile><!--  PROFILE: apklibs -->
+        <id>apklibs</id>
+        <activation>
+            <property>
+                <name>!m2e.version</name>
+            </property>
+        </activation>
+
+        <dependencies>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>android-js-rhino</artifactId>
+                <version>${project.version}</version>
+                <type>apklib</type>
+            </dependency>
+
+        </dependencies>
+    </profile>
+
+    </profiles>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+				<extensions>true</extensions>
+                <configuration>
+
+
+                </configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>android-js-parent</artifactId>
+    <groupId>org.bsc</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>android-js-rhino</artifactId>
+  <packaging>apklib</packaging>
+  <name>Android::JS::Rhino Library - ${project.version}</name>
+  <dependencies>
+    <dependency>
+      <groupId>android</groupId>
+      <artifactId>android</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+        <artifactId>android-maven-plugin</artifactId>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
