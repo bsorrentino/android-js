@@ -11,7 +11,7 @@
 
 	<artifactId>android-js-rhino-it</artifactId>
 	<packaging>apk</packaging>
-	<name>dynjs-android-parent-it - Integration tests</name>
+	<name>Android::JS::Rhino Tests - ${project.version}</name>
 
 	<dependencies>
 
