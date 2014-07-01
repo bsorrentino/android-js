@@ -1,10 +1,10 @@
-//var BroadcastReceiver       = Packages.android.content.BroadcastReceiver;
+
 var BroadcastReceiver       = Packages.org.bsc.rhino.RhinoBroadcastReceiver;
 var LocalBroadcastManager   = android.support.v4.content.LocalBroadcastManager;
 var Intent                  = Packages.android.content.Intent;
 var IntentFilter            = Packages.android.content.IntentFilter;
 
-
+var bm       = require("event.js");
 
 function print( msg ) {
     java.lang.System.out.println(msg);
@@ -22,9 +22,7 @@ var receiver = new BroadcastReceiver(
     function(ctx, ii) { print( "handle message " + ctx + " " + ii  ) }
 );
 
-print( "LOCAL_BROADCAST_MANAGER: " + LocalBroadcastManager );
-
-var bm = LocalBroadcastManager.getInstance(activity);
+print( "LOCAL_BROADCAST_MANAGER: " + bm );
 
 print( "LocalBroadcastManager: " + bm );
 

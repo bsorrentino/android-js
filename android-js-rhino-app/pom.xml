@@ -45,6 +45,7 @@
                 <type>apklib</type>
             </dependency>
 
+
         </dependencies>
     </profile>
 

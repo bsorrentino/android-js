@@ -5,11 +5,20 @@ import android.test.ActivityInstrumentationTestCase2;
 import junit.framework.Assert;
 
 import org.bsc.*;
+import org.bsc.rhino.CLModuleScriptProvider;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.commonjs.module.ModuleScript;
+import org.mozilla.javascript.commonjs.module.ModuleScriptProvider;
+import org.mozilla.javascript.commonjs.module.Require;
+import org.mozilla.javascript.commonjs.module.RequireBuilder;
+
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import java.net.URI;
 
 public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<HelloAndroidActivity> {
 
@@ -82,6 +91,7 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
 
         final Context cx = Context.enter();
 
+        final ClassLoader cl = getClass().getClassLoader();
         try {
             cx.setOptimizationLevel(-1);
             cx.setLanguageVersion(Context.VERSION_1_7);
@@ -93,11 +103,17 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
                 public Object f(Scriptable scope) throws Exception {
                     System.out.println("START TEST OF RHINO");
 
+                    final RequireBuilder rb = new RequireBuilder();
+                    rb.setModuleScriptProvider( new CLModuleScriptProvider(cl) );
+                    rb.setSandboxed(false);
+                    final Require req = rb.createRequire( cx, scope);
+                    req.install( scope );
+
                     Object scriptWrap = Context.javaToJS(activity, scope);
                     ScriptableObject.putProperty(scope, "activity", scriptWrap);
 
                     Object result = cx.evaluateReader(scope,
-                            new java.io.InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.js")),
+                            new java.io.InputStreamReader(cl.getResourceAsStream("testWithModule.js")),
                             "test", 1, null);
 
                     System.out.println("END TEST OF RHINO " + result);

@@ -25,7 +25,8 @@
             <artifactId>uiautomator</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
+
+        <dependency>
 			<groupId>org.bsc</groupId>
 			<artifactId>android-js-rhino-app</artifactId>
 			<type>apk</type>
