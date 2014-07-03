@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.bsc.*;
 import org.bsc.rhino.CLModuleScriptProvider;
+import org.bsc.rhino.F2;
 import org.bsc.rhino.F2e;
 import org.bsc.rhino.Fe;
 import org.bsc.rhino.RhinoContext;
@@ -21,6 +22,7 @@ import org.mozilla.javascript.commonjs.module.RequireBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.IOException;
 import java.net.URI;
 
 public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<HelloAndroidActivity> {
@@ -66,16 +68,16 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
 
     }
 
-    public void testActivity() throws Exception {
+    public void testActivity()  {
         final HelloAndroidActivity activity = getActivity();
         assertNotNull(activity);
 
 
 
-        Object result = RhinoContext.enter().initStandardObjects(new F2e<Context, Scriptable, Object, Exception>() {
+        Object result = RhinoContext.enter().initStandardObjects(new F2<Context, Scriptable, Object>() {
 
             @Override
-            public Object f(Context cx, Scriptable scope) throws Exception {
+            public Object f(Context cx, Scriptable scope)  {
 
                 final ClassLoader cl = getClass().getClassLoader();
 
@@ -94,16 +96,20 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
                 Object scriptWrap = Context.javaToJS(activity, scope);
                 ScriptableObject.putProperty(scope, "activity", scriptWrap);
 
-                Object result = cx.evaluateReader(scope,
-                        new java.io.InputStreamReader(cl.getResourceAsStream("testWithModule.js")),
-                        "test", 1, null);
+                Object result = null;
+                try {
+                    result = cx.evaluateReader(scope,
+                            new java.io.InputStreamReader(cl.getResourceAsStream("testWithModule.js")),
+                            "test", 1, null);
+                } catch (IOException e) {
+                   Assert.fail( e.getMessage() );
+                }
 
                 System.out.println("END TEST OF RHINO " + result);
 
                 return result;
             }
-        });
-
+        }).exit().result();
 
 
     }

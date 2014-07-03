@@ -8,27 +8,55 @@ import org.mozilla.javascript.Scriptable;
  */
 public final class RhinoContext {
 
-    private boolean exit;
+    public class Result<T> {
+
+        private final T result;
+
+        Result(T result) {
+            this.result = result;
+        }
+
+        public RhinoContext context() {
+            return  RhinoContext.this;
+        }
+
+        public Result<T> exit() {
+            context().exit();
+            return this;
+        }
+
+        public T result() {
+            return result;
+        }
+
+    }
     private Context cx;
 
     protected RhinoContext() {
-        this(null,false);
+        this(null);
     }
-    protected RhinoContext(Context cx, boolean exit) {
+    protected RhinoContext(Context cx) {
         this.cx = cx;
-        this.exit = exit;
     }
 
     public static RhinoContext enter() {
 
-        return new RhinoContext(Context.enter(), true );
+        return new RhinoContext(Context.enter());
 
     }
     public static RhinoContext current() {
 
-        return new RhinoContext( Context.getCurrentContext(), false );
+        return new RhinoContext( Context.getCurrentContext());
     }
 
+
+    public void exit() {
+        if( cx!= null ) {
+            cx.removeThreadLocal(Scriptable.class.getName());
+            Context.exit();
+            cx = null;
+        }
+    }
 
     /**
      *
@@ -37,27 +65,31 @@ public final class RhinoContext {
      * @return
      * @throws Exception
      */
-    public <T> T initStandardObjects( F2e<Context,Scriptable,T, Exception> code ) throws Exception {
+    public <T> Result<T> initStandardObjects( F2<Context,Scriptable,T> code ) {
 
         final Scriptable scope = cx.initStandardObjects();
 
         cx.putThreadLocal( Scriptable.class.getName(), scope);
 
-        T result = null;
-        try {
+        T result = (T)code.f( cx, scope );
 
-            result = (T)code.f( cx, scope );
+        return new Result(result);
 
-        }
-        finally {
-            cx.removeThreadLocal(Scriptable.class.getName());
+    }
 
-            if( exit ) Context.exit();
+    /**
+     *
+     * @param scope
+     * @param code
+     * @return
+     */
+    public <T> Result<T> evalInScope( Scriptable scope, F2<Context, Scriptable,T> code ) {
+        if( cx == null ) throw new IllegalArgumentException( "cx is null!");
+        if( scope == null ) throw new IllegalArgumentException( "scope is null!");
 
-        }
+        T result = (T)code.f( cx, scope );
 
-        return result;
-
+        return new Result(result);
     }
 
     /**
@@ -66,20 +98,11 @@ public final class RhinoContext {
      * @param <T>
      * @return
      */
-    public <T> T evalInCurrentScope( F2<Context, Scriptable,T> code ) {
-        if( cx == null ) throw new IllegalArgumentException( "cx is null!");
+    public <T> Result<T> evalInCurrentScope( F2<Context, Scriptable,T> code ) {
 
         final Scriptable scope = (Scriptable) cx.getThreadLocal(Scriptable.class.getName());
 
-        try {
-
-            T result = (T)code.f( cx, scope );
-
-            return result;
-        }
-        finally {
-            if( exit ) Context.exit();
-        }
+        return evalInScope(scope, code);
     }
 
 
