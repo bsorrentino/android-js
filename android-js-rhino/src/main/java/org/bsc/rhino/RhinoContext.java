@@ -30,11 +30,9 @@ public final class RhinoContext {
         }
 
     }
+
     private Context cx;
 
-    protected RhinoContext() {
-        this(null);
-    }
     protected RhinoContext(Context cx) {
         this.cx = cx;
     }
@@ -49,6 +47,9 @@ public final class RhinoContext {
         return new RhinoContext( Context.getCurrentContext());
     }
 
+    public Context getUnderlyingContext() {
+        return cx;
+    }
 
     public void exit() {
         if( cx!= null ) {
