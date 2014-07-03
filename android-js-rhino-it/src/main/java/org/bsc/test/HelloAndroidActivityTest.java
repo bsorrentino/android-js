@@ -6,6 +6,9 @@ import junit.framework.Assert;
 
 import org.bsc.*;
 import org.bsc.rhino.CLModuleScriptProvider;
+import org.bsc.rhino.F2e;
+import org.bsc.rhino.Fe;
+import org.bsc.rhino.RhinoContext;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -63,70 +66,45 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
 
     }
 
-    private <T> T initStandardObjects( Context cx, Fe<Scriptable,T, Exception> code ) throws Exception {
-
-        final Scriptable scope = cx.initStandardObjects();
-
-        cx.putThreadLocal( Scriptable.class.getName(), scope);
-
-        T result = null;
-        try {
-
-            result = (T)code.f( scope );
-
-        }
-        finally {
-            cx.removeThreadLocal(Scriptable.class.getName());
-
-        }
-
-        return result;
-
-    }
-
     public void testActivity() throws Exception {
         final HelloAndroidActivity activity = getActivity();
         assertNotNull(activity);
 
 
-        final Context cx = Context.enter();
 
-        final ClassLoader cl = getClass().getClassLoader();
-        try {
-            cx.setOptimizationLevel(-1);
-            cx.setLanguageVersion(Context.VERSION_1_7);
-            cx.setApplicationClassLoader(getClass().getClassLoader());
+        Object result = RhinoContext.enter().initStandardObjects(new F2e<Context, Scriptable, Object, Exception>() {
+
+            @Override
+            public Object f(Context cx, Scriptable scope) throws Exception {
+
+                final ClassLoader cl = getClass().getClassLoader();
+
+                cx.setOptimizationLevel(-1);
+                cx.setLanguageVersion(Context.VERSION_1_7);
+                cx.setApplicationClassLoader(cl);
+
+                System.out.println("START TEST OF RHINO");
+
+                final RequireBuilder rb = new RequireBuilder();
+                rb.setModuleScriptProvider(new CLModuleScriptProvider(cl));
+                rb.setSandboxed(false);
+                final Require req = rb.createRequire(cx, scope);
+                req.install(scope);
+
+                Object scriptWrap = Context.javaToJS(activity, scope);
+                ScriptableObject.putProperty(scope, "activity", scriptWrap);
+
+                Object result = cx.evaluateReader(scope,
+                        new java.io.InputStreamReader(cl.getResourceAsStream("testWithModule.js")),
+                        "test", 1, null);
+
+                System.out.println("END TEST OF RHINO " + result);
+
+                return result;
+            }
+        });
 
 
-            initStandardObjects(cx, new Fe<Scriptable, Object, Exception>() {
-                @Override
-                public Object f(Scriptable scope) throws Exception {
-                    System.out.println("START TEST OF RHINO");
 
-                    final RequireBuilder rb = new RequireBuilder();
-                    rb.setModuleScriptProvider( new CLModuleScriptProvider(cl) );
-                    rb.setSandboxed(false);
-                    final Require req = rb.createRequire( cx, scope);
-                    req.install( scope );
-
-                    Object scriptWrap = Context.javaToJS(activity, scope);
-                    ScriptableObject.putProperty(scope, "activity", scriptWrap);
-
-                    Object result = cx.evaluateReader(scope,
-                            new java.io.InputStreamReader(cl.getResourceAsStream("testWithModule.js")),
-                            "test", 1, null);
-
-                    System.out.println("END TEST OF RHINO " + result);
-
-                    return result;
-                }
-            });
-
-
-
-        }
-        finally {
-            Context.exit();
-        }
     }
 }

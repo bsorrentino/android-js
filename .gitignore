@@ -2,3 +2,4 @@
 target/
 .forge_settings
 *.iml
+gen/

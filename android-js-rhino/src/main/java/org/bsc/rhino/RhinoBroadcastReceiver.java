@@ -28,19 +28,18 @@ public class RhinoBroadcastReceiver extends BroadcastReceiver {
      * @param intent
      */
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive( final Context context, final Intent intent) {
 
-        final org.mozilla.javascript.Context cx =
-                org.mozilla.javascript.Context.getCurrentContext();
+        RhinoContext.current().evalInCurrentScope( new F2<org.mozilla.javascript.Context, Scriptable, Void>() {
+            @Override
+            public Void f(org.mozilla.javascript.Context cx, Scriptable scope) {
 
-        if( cx != null ) {
-
-            final Scriptable scope = (Scriptable) cx.getThreadLocal(Scriptable.class.getName());
-
-            onReceiveFunction.call(cx,
-                    scope,
-                    null,
-                    new Object[]{context, intent});
-        }
+                onReceiveFunction.call(cx,
+                        scope,
+                        null,
+                        new Object[]{context, intent});
+                return null;
+            }
+        });
     }
 }
