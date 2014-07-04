@@ -72,6 +72,7 @@ public final class RhinoContext {
      * @throws Exception
      */
     public <T> Result<T> initStandardObjects( F2<Context,Scriptable,T> code ) {
+        if( cx == null ) throw new IllegalArgumentException( "cx is null!");
 
         final Scriptable scope = cx.initStandardObjects();
 
@@ -109,6 +110,7 @@ public final class RhinoContext {
      * @return
      */
     public <T> Result<T> evalInCurrentScope( F2<Context, Scriptable,T> code ) {
+        if( cx == null ) throw new IllegalArgumentException( "cx is null!");
 
         final Scriptable scope = (Scriptable) cx.getThreadLocal(Scriptable.class.getName());
 
