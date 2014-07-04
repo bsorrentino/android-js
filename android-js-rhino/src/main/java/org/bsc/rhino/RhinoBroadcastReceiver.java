@@ -30,7 +30,7 @@ public class RhinoBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive( final Context context, final Intent intent) {
 
-        RhinoContext.current().evalInCurrentScope( new F2<org.mozilla.javascript.Context, Scriptable, Void>() {
+        RhinoContext.enterContext().evalInCurrentScope( new F2<org.mozilla.javascript.Context, Scriptable, Void>() {
             @Override
             public Void f(org.mozilla.javascript.Context cx, Scriptable scope) {
 

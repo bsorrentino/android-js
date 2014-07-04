@@ -46,7 +46,7 @@ public final class RhinoContext {
 
         Context cx = Context.getCurrentContext();
 
-        return new RhinoContext( ContextFactory.getGlobal().enterContext(cx) );
+        return new RhinoContext( (cx==null ) ? ContextFactory.getGlobal().enterContext(cx) : cx );
 
     }
 
