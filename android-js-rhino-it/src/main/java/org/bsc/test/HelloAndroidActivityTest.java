@@ -74,7 +74,7 @@ public class HelloAndroidActivityTest extends ActivityInstrumentationTestCase2<H
 
 
 
-        Object result = RhinoContext.enter().initStandardObjects(new F2<Context, Scriptable, Object>() {
+        Object result = RhinoContext.enterContext().initStandardObjects(new F2<Context, Scriptable, Object>() {
 
             @Override
             public Object f(Context cx, Scriptable scope)  {

@@ -1,6 +1,7 @@
 package org.bsc.rhino;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Scriptable;
 
 /**
@@ -37,26 +38,30 @@ public final class RhinoContext {
         this.cx = cx;
     }
 
-    public static RhinoContext enter() {
+    /**
+     *
+     * @return
+     */
+    public static RhinoContext enterContext() {
 
-        return new RhinoContext(Context.enter());
+        Context cx = Context.getCurrentContext();
 
-    }
-    public static RhinoContext current() {
+        return new RhinoContext( ContextFactory.getGlobal().enterContext(cx) );
 
-        return new RhinoContext( Context.getCurrentContext());
     }
 
     public Context getUnderlyingContext() {
         return cx;
     }
 
-    public void exit() {
+
+    public RhinoContext exit() {
         if( cx!= null ) {
             cx.removeThreadLocal(Scriptable.class.getName());
             Context.exit();
             cx = null;
         }
+        return this;
     }
 
     /**
@@ -88,7 +93,11 @@ public final class RhinoContext {
         if( cx == null ) throw new IllegalArgumentException( "cx is null!");
         if( scope == null ) throw new IllegalArgumentException( "scope is null!");
 
-        T result = (T)code.f( cx, scope );
+
+        T result = null ;
+
+
+        result = (T)code.f( cx, scope );
 
         return new Result(result);
     }
